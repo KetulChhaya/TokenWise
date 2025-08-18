@@ -1,4 +1,4 @@
-# LLM Cost Monitor
+# TokenWise
 
 A lightweight, zero-dependency NPM package to monitor the costs of OpenAI API calls. Get clear insights into your LLM expenses with minimal setup.
 
@@ -13,7 +13,7 @@ A lightweight, zero-dependency NPM package to monitor the costs of OpenAI API ca
 ## Installation
 
 ```bash
-npm install llm-cost-monitor
+npm install tokenwise
 ```
 
 ## Quick Start
@@ -36,7 +36,7 @@ In your application code, import the `monitor` and `initializeDatabase` function
 
 ```typescript
 import OpenAI from "openai";
-import { monitor, initializeDatabase } from "llm-cost-monitor";
+import { monitor, initializeDatabase } from "tokenwise";
 import dotenv from "dotenv";
 
 // Load environment variables
@@ -82,11 +82,66 @@ main();
 
 That's it! Every call you make using the `monitoredOpenAI` client will now be logged to the `llm-logs.db` file in your project root.
 
-## Viewing the Data
+## Programmatic API
 
-The collected data is stored in a standard SQLite database. You can view it using any SQLite browser, such as [DB Browser for SQLite](https://sqlitebrowser.org/).
+TokenWise also provides functions to access the logged data programmatically, allowing you to build custom reports, dashboards, or alerting systems.
 
-*(Coming Soon: A built-in CLI dashboard to view analytics directly from your terminal!)*
+### `getLogs(): LogRecord[]`
+
+Fetches all log records from the database.
+
+```typescript
+import { getLogs } from "tokenwise";
+
+const allLogs = getLogs();
+console.log(`Found ${allLogs.length} logs.`);
+```
+
+### `getCostSummary(options): object`
+
+Fetches aggregated cost data.
+
+**Options:**
+-   `groupBy?: string`: A metadata key to group the cost summary by.
+
+**Examples:**
+
+```typescript
+import { getCostSummary } from "tokenwise";
+
+// Get the total cost of all calls
+const { totalCost } = getCostSummary();
+console.log(`Total cost: $${totalCost.toFixed(6)}`);
+
+// Get the total cost grouped by user
+const costByUser = getCostSummary({ groupBy: "userId" });
+// { 'user-123': 0.00015, 'user-456': 0.00028 }
+console.log("Cost by user:", costByUser);
+```
+
+## CLI Dashboard
+
+TokenWise comes with a built-in command-line dashboard to quickly analyze your collected data directly from the terminal.
+
+### Basic Usage
+
+To see a list of all your recent API calls, run:
+
+```bash
+npx tokenwise dashboard
+```
+
+This will display a table with the timestamp, model, cost, latency, and status of each call.
+
+### Grouped Analysis
+
+The most powerful feature of the dashboard is the ability to group your data using the metadata you've logged. To see a summary of costs grouped by any metadata key (e.g., `userId`), use the `--group-by` flag:
+
+```bash
+npx tokenwise dashboard --group-by userId
+```
+
+This will output a summary table showing the total calls, total cost, and average latency for each user.
 
 ## How It Works
 
