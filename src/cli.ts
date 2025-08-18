@@ -8,7 +8,7 @@ import path from "path";
 const program = new Command();
 
 program
-  .name("tokenwise")
+  .name("tokenwise-tracker")
   .description("A CLI to analyze and monitor your LLM API costs.")
   .version("0.1.0");
 

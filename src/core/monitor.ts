@@ -5,11 +5,18 @@ import type {
   ChatCompletionCreateParams,
 } from "openai/resources/chat/completions";
 import { Stream } from "openai/streaming";
-import { insertLog } from "../db/db.js";
+import { insertLog, initializeDatabase } from "../db/db.js";
 import { calculateCost } from "./pricing.js";
 import type { LogRecord } from "../types.js";
 
+let isDatabaseInitialized = false;
+
 export const monitor = (openai: OpenAI): OpenAI => {
+  if (!isDatabaseInitialized) {
+    initializeDatabase();
+    isDatabaseInitialized = true;
+  }
+
   return new Proxy(openai, {
     get(target, prop) {
       if (prop === "chat") {

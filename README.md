@@ -1,24 +1,42 @@
-# TokenWise
+# TokenWise Tracker
 
 A lightweight, zero-dependency NPM package to monitor the costs of OpenAI API calls. Get clear insights into your LLM expenses with minimal setup.
 
 ## Features
 
--   **Cost Tracking**: Automatically logs the cost, token usage, and latency of each OpenAI API call.
+-   **Cost Tracking**: Automatically logs the cost, token usage, and latency of each OpenAI API call along with any metadata
 -   **Robust Logging**: Stores all monitoring data locally in a SQLite database (`llm-logs.db`).
--   **Error Handling**: Captures and logs failed API calls so you can debug issues.
--   **Intelligent Model Matching**: Automatically detects base models (e.g., `gpt-4` from `gpt-4-0125-preview`) for accurate pricing.
--   **TypeScript Support**: Fully written in TypeScript with type definitions included.
+
+
+
+## Supported Models
+
+TokenWise Tracker is designed to work with versioned and fine-tuned models by automatically matching them to a base model for pricing. The following base models are currently supported:
+
+-   `gpt-5`
+-   `gpt-5-mini`
+-   `gpt-5-nano`
+-   `gpt-4.1`
+-   `gpt-4.1-mini`
+-   `gpt-4.1-nano`
+-   `gpt-4o`
+-   `gpt-4o-mini`
+-   `gpt-4.5`
+-   `o1-pro`
+-   `gpt-4` (Legacy)
+-   `gpt-3.5-turbo` (Legacy)
+
+For the most up-to-date pricing, please refer to the official OpenAI API documentation.
 
 ## Installation
 
 ```bash
-npm install tokenwise
+npm install tokenwise-tracker
 ```
 
 ## Quick Start
 
-Monitoring your OpenAI costs is a simple, two-step process.
+Getting started with TokenWise Tracker is as simple as wrapping your OpenAI client.
 
 ### 1. Set Up Your Environment
 
@@ -28,29 +46,25 @@ First, make sure you have your OpenAI API key available in an environment variab
 OPENAI_API_KEY=<your_openai_api_key>
 ```
 
-Our library uses `dotenv` to load this key automatically.
-
 ### 2. Wrap Your OpenAI Client
 
-In your application code, import the `monitor` and `initializeDatabase` functions. Call `initializeDatabase` once when your application starts, and then wrap your existing OpenAI client with the `monitor` function.
+In your application code, simply import the `monitor` function and wrap your existing OpenAI client. The database will be initialized automatically on the first run.
 
 ```typescript
 import OpenAI from "openai";
-import { monitor, initializeDatabase } from "tokenwise";
+import { monitor } from "tokenwise-tracker";
 import dotenv from "dotenv";
 
 // Load environment variables
 dotenv.config();
-
-// Initialize the database (creates llm-logs.db if it doesn't exist)
-initializeDatabase();
 
 // Create your standard OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Wrap the client with the monitor
+// Wrap the client with the monitor. That's it!
+// The database is automatically initialized on the first call.
 const monitoredOpenAI = monitor(openai);
 
 // Now, use the monitored client exactly as you would the original
@@ -84,14 +98,14 @@ That's it! Every call you make using the `monitoredOpenAI` client will now be lo
 
 ## Programmatic API
 
-TokenWise also provides functions to access the logged data programmatically, allowing you to build custom reports, dashboards, or alerting systems.
+TokenWise Tracker also provides functions to access the logged data programmatically, allowing you to build custom reports, dashboards, or alerting systems.
 
 ### `getLogs(): LogRecord[]`
 
 Fetches all log records from the database.
 
 ```typescript
-import { getLogs } from "tokenwise";
+import { getLogs } from "tokenwise-tracker";
 
 const allLogs = getLogs();
 console.log(`Found ${allLogs.length} logs.`);
@@ -107,7 +121,7 @@ Fetches aggregated cost data.
 **Examples:**
 
 ```typescript
-import { getCostSummary } from "tokenwise";
+import { getCostSummary } from "tokenwise-tracker";
 
 // Get the total cost of all calls
 const { totalCost } = getCostSummary();
@@ -121,14 +135,14 @@ console.log("Cost by user:", costByUser);
 
 ## CLI Dashboard
 
-TokenWise comes with a built-in command-line dashboard to quickly analyze your collected data directly from the terminal.
+TokenWise Tracker comes with a built-in command-line dashboard to quickly analyze your collected data directly from the terminal.
 
 ### Basic Usage
 
 To see a list of all your recent API calls, run:
 
 ```bash
-npx tokenwise dashboard
+npx tokenwise-tracker dashboard
 ```
 
 This will display a table with the timestamp, model, cost, latency, and status of each call.
@@ -138,7 +152,7 @@ This will display a table with the timestamp, model, cost, latency, and status o
 The most powerful feature of the dashboard is the ability to group your data using the metadata you've logged. To see a summary of costs grouped by any metadata key (e.g., `userId`), use the `--group-by` flag:
 
 ```bash
-npx tokenwise dashboard --group-by userId
+npx tokenwise-tracker dashboard --group-by userId
 ```
 
 This will output a summary table showing the total calls, total cost, and average latency for each user.

@@ -28,5 +28,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-  "include": ["src/**/*", "examples/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "examples"]
 }

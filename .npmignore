@@ -1,0 +1,17 @@
+# Build output
+dist
+
+# Source files
+src
+examples
+
+# Config files
+tsconfig.json
+.gitignore
+.npmignore
+
+# Logs and environment
+llm-logs.db*
+.env
+brainstorming
+

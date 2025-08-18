@@ -1,7 +1,6 @@
 import OpenAI from "openai";
 import {
   monitor,
-  initializeDatabase,
   getLogs,
   getCostSummary,
 } from "../src/index.js";
@@ -10,12 +9,12 @@ import dotenv from "dotenv";
 (async () => {
   try {
     dotenv.config();
-    initializeDatabase();
 
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
 
+    // monitor() will automatically initialize the database on its first run
     const monitoredOpenAI = monitor(openai);
 
     const response = await (
