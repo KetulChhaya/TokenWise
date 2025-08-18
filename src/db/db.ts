@@ -6,16 +6,17 @@ let db: Database.Database;
 
 // Indempotent Function
 export function initializeDatabase() {
-    try {
-        // Initialize the database
-        const dbPath = path.resolve(process.cwd(), "llm-logs.db");
-        db = new Database(dbPath);
+  if (db) return;
+  try {
+    // Initialize the database
+    const dbPath = path.resolve(process.cwd(), "llm-logs.db");
+    db = new Database(dbPath);
 
-        // WAL mode for better concurrency and performance.
-        db.pragma("journal_mode = WAL");
+    // WAL mode for better concurrency and performance.
+    db.pragma("journal_mode = WAL");
 
-        // Create the log table if it doesn't exist
-        const createTableStatement = `
+    // Create the log table if it doesn't exist
+    const createTableStatement = `
         CREATE TABLE IF NOT EXISTS llm_logs(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             timestamp TEXT NOT NULL,

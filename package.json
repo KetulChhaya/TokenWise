@@ -1,18 +1,51 @@
 {
-  "name": "tokenwise",
+  "name": "tokenwise-tracker",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
   "bin": {
-    "tokenwise": "dist/src/cli.js"
+    "tokenwise-tracker": "dist/src/cli.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "node dist/examples/example.js"
   },
-  "keywords": [],
-  "author": "",
+  "author": "Ketul Chhaya <chhayaketul@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KetulChhaya/TokenWise.git"
+  },
+  "bugs": {
+    "url": "https://github.com/KetulChhaya/TokenWise/issues"
+  },
+  "homepage": "https://github.com/KetulChhaya/TokenWise#readme",
+  "keywords": [
+    "llm",
+    "ai",
+    "openai",
+    "cost",
+    "tracker",
+    "monitor",
+    "analytics",
+    "token",
+    "usage",
+    "tokenwise",
+    "tokenwise-tracker",
+    "token-usage",
+    "token-cost",
+    "token-analytics",
+    "token-monitor",
+    "token-tracker",
+    "token-usage-tracker",
+    "token-cost-tracker",
+    "token-usage-analytics",
+    "token-cost-analytics",
+    "token-usage-monitor",
+    "token-cost-monitor",
+    "token-usage-tracker",
+    "token-cost-tracker"
+  ],
   "license": "ISC",
   "description": "",
   "dependencies": {
