@@ -1,0 +1,12 @@
+/node_modules
+
+/dist
+
+llm-logs.db
+llm-logs.db-shm
+llm-logs.db-wal
+
+.env
+
+TECHNICAL_DOCUMENTATION.md
+.cursorrules
