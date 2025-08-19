@@ -52,7 +52,7 @@ In your application code, simply import the `monitor` function and wrap your exi
 
 ```typescript
 import OpenAI from "openai";
-import { monitor } from "tokenwise-tracker";
+import { monitor } from "tokenwise-tracker/dist/index.js";
 import dotenv from "dotenv";
 
 // Load environment variables
@@ -105,7 +105,7 @@ TokenWise Tracker also provides functions to access the logged data programmatic
 Fetches all log records from the database.
 
 ```typescript
-import { getLogs } from "tokenwise-tracker";
+import { getLogs } from "tokenwise-tracker/dist/index.js";
 
 const allLogs = getLogs();
 console.log(`Found ${allLogs.length} logs.`);
@@ -121,7 +121,7 @@ Fetches aggregated cost data.
 **Examples:**
 
 ```typescript
-import { getCostSummary } from "tokenwise-tracker";
+import { getCostSummary } from "tokenwise-tracker/dist/index.js";
 
 // Get the total cost of all calls
 const { totalCost } = getCostSummary();
