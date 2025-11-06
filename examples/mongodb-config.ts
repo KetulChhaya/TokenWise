@@ -19,7 +19,7 @@ import dotenv from "dotenv";
       database: {
         type: "mongodb",
         mongodb: {
-          connectionUrl: process.env.MONGODB_CONNECTION_URL || "mongodb+srv://username:password@cluster.mongodb.net/",
+          connectionUrl: process.env.MONGODB_CONNECTION_URL || "mongodb+srv://your-username:your-password@your-cluster.mongodb.net/",
           database: process.env.MONGODB_DATABASE || "tokenwise",
           collection: "openai_logs",
         }
@@ -32,7 +32,7 @@ import dotenv from "dotenv";
       database: {
         type: "mongodb",
         mongodb: {
-          connectionUrl: process.env.MONGODB_CONNECTION_URL || "mongodb+srv://username:password@cluster.mongodb.net/",
+          connectionUrl: process.env.MONGODB_CONNECTION_URL || "mongodb+srv://your-username:your-password@your-cluster.mongodb.net/",
           database: "tokenwise_production",
           collection: "llm_usage_logs",
           options: {
@@ -70,7 +70,7 @@ import dotenv from "dotenv";
       database: {
         type: "mongodb",
         mongodb: {
-          connectionUrl: "mongodb+srv://username:password@cluster.mongodb.net/database?retryWrites=true&w=majority",
+          connectionUrl: "mongodb+srv://your-username:your-password@your-cluster.mongodb.net/your-database?retryWrites=true&w=majority",
           database: "tokenwise",
           collection: "api_logs",
         }

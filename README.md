@@ -114,7 +114,7 @@ First, make sure you have your OpenAI API key available in an environment variab
 OPENAI_API_KEY=your_openai_api_key_here
 
 # For MongoDB (if using MongoDB)
-MONGODB_CONNECTION_URL=mongodb+srv://username:password@cluster.mongodb.net/
+MONGODB_CONNECTION_URL=mongodb+srv://your-username:your-password@your-cluster.mongodb.net/
 MONGODB_DATABASE=tokenwise
 
 # For Firebase (if using Firebase)
@@ -283,7 +283,7 @@ To use MongoDB Atlas with TokenWise Tracker:
 
 4. **Set Environment Variables**:
    ```bash
-   MONGODB_CONNECTION_URL=mongodb+srv://username:password@cluster.mongodb.net/
+   MONGODB_CONNECTION_URL=mongodb+srv://your-username:your-password@your-cluster.mongodb.net/
    MONGODB_DATABASE=tokenwise
    ```
 

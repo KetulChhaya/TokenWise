@@ -15,7 +15,7 @@ import dotenv from "dotenv";
       database: {
         type: "mongodb",
         mongodb: {
-          connectionUrl: process.env.MONGODB_CONNECTION_URL || "mongodb+srv://username:password@cluster.mongodb.net/",
+          connectionUrl: process.env.MONGODB_CONNECTION_URL || "mongodb+srv://your-username:your-password@your-cluster.mongodb.net/",
           database: process.env.MONGODB_DATABASE || "tokenwise",
           collection: "streaming_logs",
         }
