@@ -1,30 +1,32 @@
 import OpenAI from "openai";
-import {
-  monitor,
-  getLogs,
-  getCostSummary,
-} from "../src/index.js";
+import { monitor } from "../src/index.js";
 import dotenv from "dotenv";
 
 (async () => {
   try {
     dotenv.config();
 
+    // Validate required environment variables
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error("OPENAI_API_KEY environment variable is required");
+    }
+
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
 
-    // monitor() will automatically initialize the database on its first run
-    const monitoredOpenAI = monitor(openai);
+    // SQLite monitoring (default database)
+    const monitoredOpenAI = await monitor(openai);
 
-    const response = await (
-      monitoredOpenAI as any
-    ).chat.completions.create(
+    console.log("Testing SQLite basic monitoring...");
+    console.log("=" .repeat(50));
+
+    const response = await (monitoredOpenAI as any).chat.completions.create(
       {
         model: "gpt-3.5-turbo",
         messages: [{ role: "user", content: "Hello world" }],
       },
-      undefined, // No options needed here
+      undefined, // No request options
       {
         metadata: {
           userId: "user-123",
@@ -52,21 +54,7 @@ import dotenv from "dotenv";
     );
 
     console.log("Made two API calls with different users.");
-
-    // --- Programmatic API Usage ---
-    console.log("\n--- Analytics ---");
-
-    // 1. Get all logs
-    const allLogs = getLogs();
-    console.log(`Total logs found: ${allLogs.length}`);
-
-    // 2. Get total cost
-    const totalCost = getCostSummary();
-    console.log(`Total cost: $${totalCost.totalCost.toFixed(6)}`);
-
-    // 3. Get cost grouped by user
-    const costByUser = getCostSummary({ groupBy: "userId" });
-    console.log("Cost by user:", costByUser);
+    console.log("Logs have been automatically inserted into SQLite database.");
     
   } catch (error) {
     console.error("API call failed:", error);

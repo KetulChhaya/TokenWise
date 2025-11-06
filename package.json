@@ -1,15 +1,30 @@
 {
   "name": "tokenwise-tracker",
   "version": "1.0.2",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
-  "bin": {
-    "tokenwise-tracker": "dist/src/cli.js"
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=16.0.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npx tsx test/run-all.ts",
     "build": "tsc",
-    "start": "node dist/examples/example.js"
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean",
+    "prepublishOnly": "npm run build"
   },
   "author": "Ketul Chhaya <chhayaketul@gmail.com>",
   "repository": {
@@ -21,45 +36,38 @@
   },
   "homepage": "https://github.com/KetulChhaya/TokenWise#readme",
   "keywords": [
+    "openai",
     "llm",
     "ai",
-    "openai",
-    "cost",
-    "tracker",
-    "monitor",
-    "analytics",
-    "token",
-    "usage",
-    "tokenwise",
-    "tokenwise-tracker",
+    "cost-tracking",
     "token-usage",
-    "token-cost",
-    "token-analytics",
-    "token-monitor",
-    "token-tracker",
-    "token-usage-tracker",
-    "token-cost-tracker",
-    "token-usage-analytics",
-    "token-cost-analytics",
-    "token-usage-monitor",
-    "token-cost-monitor",
-    "token-usage-tracker",
-    "token-cost-tracker"
+    "monitoring",
+    "analytics",
+    "sqlite",
+    "firebase",
+    "mongodb",
+    "mongodb-atlas",
+    "firestore",
+    "database",
+    "logging",
+    "metrics"
   ],
-  "license": "ISC",
-  "description": "",
+  "license": "MIT",
+  "description": "A lightweight, zero-dependency package to monitor OpenAI API costs, token usage, and performance with SQLite, Firebase, and MongoDB support.",
   "dependencies": {
-    "better-sqlite3": "^12.2.0",
-    "commander": "^14.0.0",
-    "console-table-printer": "^2.14.6",
     "dotenv": "^17.2.1",
     "openai": "^5.12.2"
   },
+  "peerDependencies": {
+    "better-sqlite3": "^12.4.1",
+    "firebase-admin": "^12.0.0",
+    "mongodb": "^6.0.0"
+  },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
-    "@types/commander": "^2.12.0",
     "@types/node": "^24.3.0",
     "ts-node": "^10.9.2",
+    "tsx": "^4.0.0",
     "typescript": "^5.9.2"
   }
 }

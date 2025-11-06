@@ -1,17 +1,33 @@
-# Build output
-dist
-
 # Source files
-src
-examples
+src/
+test/
+examples/
+brainstorming/
 
-# Config files
-tsconfig.json
-.gitignore
-.npmignore
-
-# Logs and environment
-llm-logs.db*
+# Development files
 .env
-brainstorming
+.env.local
+.env.*.local
+tsconfig.json
 
+# Logs
+*.log
+llm-logs.db
+
+# Dependencies
+node_modules/
+
+# Build artifacts
+*.tsbuildinfo
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
