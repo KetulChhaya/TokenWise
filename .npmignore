@@ -1,33 +1,55 @@
-# Source files
+# Source files (only include dist/)
 src/
-test/
-examples/
-brainstorming/
-
-# Development files
-.env
-.env.local
-.env.*.local
 tsconfig.json
 
-# Logs
-*.log
-llm-logs.db
-
-# Dependencies
-node_modules/
+# Development and testing
+test/
+*.test.ts
+*.test.js
 
 # Build artifacts
-*.tsbuildinfo
+node_modules/
+*.log
 
-# IDE
+# Environment files and secrets (CRITICAL SECURITY)
+.env*
+*.env*
+.environment
+*.key
+*.pem
+*.p12
+*.pfx
+*secret*
+*credential*
+*config.json
+firebase-adminsdk-*.json
+
+# Development databases
+*.db
+*.db-shm
+*.db-wal
+
+# IDE and editor files
 .vscode/
 .idea/
+*.swp
+*.swo
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
 
 # Git
 .git/
 .gitignore
+
+# Documentation that's not needed in package
+brainstorming/
+examples/firebase-nextjs-setup.md
+examples/test-nextjs-setup.md
+examples/nextjs-langchain.ts
+
+# Lock files (users should generate their own)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

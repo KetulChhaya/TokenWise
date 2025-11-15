@@ -16,6 +16,10 @@ This directory contains comprehensive examples demonstrating how to use TokenWis
 - **`firebase-config.ts`** - Multiple Firebase configuration methods
 - **`firebase-env.ts`** - Environment variable setup and validation
 
+### **LangChain Integration Examples**
+- **`langchain-basic.ts`** - Basic LangChain ChatOpenAI monitoring
+- **`langchain-streaming.ts`** - LangChain streaming with TokenWise monitoring
+
 ## 🚀 Quick Start
 
 ### SQLite (Default)
@@ -40,6 +44,15 @@ npx tsx examples/firebase-config.ts
 
 # Environment setup
 npx tsx examples/firebase-env.ts
+```
+
+### LangChain
+```bash
+# Basic LangChain monitoring
+npx tsx examples/langchain-basic.ts
+
+# LangChain streaming monitoring
+npx tsx examples/langchain-streaming.ts
 ```
 
 ## 🔧 Environment Setup

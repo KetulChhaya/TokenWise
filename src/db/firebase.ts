@@ -5,7 +5,8 @@ export interface FirebaseHandler {
 }
 
 export function createFirebaseHandler(config: FirebaseConfig): FirebaseHandler {
-  console.log(`Firebase database initialized for project: ${config.projectId}, collection: ${config.collection}`);
+  const collectionName = config.collection || "llm_logs"; // Default collection name
+  console.log(`Firebase database initialized for project: ${config.projectId}, collection: ${collectionName}`);
   
   // Initialize Firebase Admin SDK
   let admin: any = null;
@@ -74,7 +75,7 @@ export function createFirebaseHandler(config: FirebaseConfig): FirebaseHandler {
           console.log("      • Provide serviceAccount object in config");
           console.log("      • Provide serviceAccountKey file path in config");
           console.log("      • Provide clientEmail and privateKey in config");
-          console.log(`Current log (would be stored in ${config.projectId} collection: ${config.collection}):`);
+          console.log(`Current log (would be stored in ${config.projectId} collection: ${collectionName}):`);
           console.log(JSON.stringify(log, null, 2));
           return;
         }
@@ -96,7 +97,7 @@ export function createFirebaseHandler(config: FirebaseConfig): FirebaseHandler {
           };
 
           // Insert log into Firestore
-          db.collection(config.collection).add(cleanLog).then(() => {
+          db.collection(collectionName).add(cleanLog).then(() => {
             // Silent success - no need to log every successful insert
           }).catch((error: any) => {
             console.error("Failed to insert log to Firebase:", error.message || error);
@@ -113,7 +114,7 @@ export function createFirebaseHandler(config: FirebaseConfig): FirebaseHandler {
     // Fallback to console logging
     return {
       insertLog(log: LogRecord) {
-        console.log(`Firebase log (fallback): ${JSON.stringify(log)} to project: ${config.projectId}, collection: ${config.collection}`);
+        console.log(`Firebase log (fallback): ${JSON.stringify(log)} to project: ${config.projectId}, collection: ${collectionName}`);
       }
     };
   }

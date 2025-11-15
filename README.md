@@ -214,6 +214,90 @@ Each example demonstrates different configuration options and use cases.
 
 This package uses a JavaScript `Proxy` to non-intrusively wrap your OpenAI client. It intercepts calls to `chat.completions.create`, records the start and end times, calculates the cost based on the model and token usage, and logs the results (including any custom metadata) to the database. It's designed to have zero impact on your existing code's logic.
 
+## LangChain Integration
+
+TokenWise Tracker seamlessly integrates with LangChain's ChatOpenAI for automatic cost and token tracking in your LangChain applications.
+
+### Installation for LangChain
+
+```bash
+# Install TokenWise with LangChain dependencies
+npm install tokenwise-tracker @langchain/openai @langchain/core
+
+# Choose your database (SQLite example)
+npm install better-sqlite3
+```
+
+### Basic LangChain Usage
+
+```typescript
+import { ChatOpenAI } from "@langchain/openai";
+import { monitorChatOpenAI } from "tokenwise-tracker";
+
+// 1. Create your regular ChatOpenAI model
+const model = new ChatOpenAI({
+  openAIApiKey: process.env.OPENAI_API_KEY,
+  modelName: "gpt-4o-mini",
+  temperature: 0.7,
+});
+
+// 2. Wrap it with TokenWise monitoring
+const monitoredModel = await monitorChatOpenAI(model, {
+  database: { type: "sqlite" },
+  metadata: { userId: "user123", feature: "chat" }
+});
+
+// 3. Use exactly like regular ChatOpenAI - monitoring is automatic!
+const response = await monitoredModel.invoke("Hello, world!");
+const stream = await monitoredModel.stream("Count from 1 to 5");
+```
+
+### LangChain Streaming Example
+
+```typescript
+import { ChatOpenAI } from "@langchain/openai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";
+import { monitorChatOpenAI } from "tokenwise-tracker";
+
+// Create and monitor your ChatOpenAI model
+const model = new ChatOpenAI({
+  openAIApiKey: process.env.OPENAI_API_KEY,
+  modelName: "gpt-4o-mini",
+  streaming: true,
+});
+
+const monitoredModel = await monitorChatOpenAI(model, {
+  database: { type: "sqlite" }, // or firebase/mongodb
+  metadata: {
+    userId: "user123",
+    feature: "chat",
+    integration: "langchain"
+  }
+});
+
+// Use in your existing LangChain chains
+const prompt = ChatPromptTemplate.fromTemplate("Write a story about: {topic}");
+const chain = prompt.pipe(monitoredModel).pipe(new StringOutputParser());
+
+// Stream the response - automatic monitoring!
+const stream = await chain.stream({ topic: "AI robots" });
+for await (const chunk of stream) {
+  process.stdout.write(chunk);
+}
+```
+
+### What Gets Tracked
+
+✅ **Input tokens** (from prompts and chat history)  
+✅ **Output tokens** (from responses, including streaming)  
+✅ **Cost calculation** (based on model pricing)  
+✅ **Latency** (request start to completion)  
+✅ **Success/error status**  
+✅ **Custom metadata** (userId, sessionId, feature, etc.)  
+
+All automatically logged to your chosen database with **zero code changes** to your existing LangChain logic!
+
 ## Advanced Features
 
 ### Database Configuration

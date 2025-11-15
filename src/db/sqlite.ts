@@ -1,11 +1,11 @@
 import path from "path";
-import type { LogRecord } from "../types.js";
+import type { LogRecord, SQLiteConfig } from "../types.js";
 
 export interface SQLiteHandler {
   insertLog(log: LogRecord): void;
 }
 
-export async function createSQLiteHandler(): Promise<SQLiteHandler> {
+export async function createSQLiteHandler(config?: SQLiteConfig): Promise<SQLiteHandler> {
   // Check if better-sqlite3 is installed
   let Database: any;
   try {
@@ -18,8 +18,12 @@ export async function createSQLiteHandler(): Promise<SQLiteHandler> {
     throw new Error("better-sqlite3 is required for SQLite database support. Please install it: npm install better-sqlite3");
   }
 
+  // Use configurable filename and table name with defaults
+  const filename = config?.filename || "llm-logs.db";
+  const tableName = config?.tableName || "llm_logs";
+  
   // Initialize the database
-  const dbPath = path.resolve(process.cwd(), "llm-logs.db");
+  const dbPath = path.resolve(process.cwd(), filename);
   const db = new Database(dbPath);
 
   // WAL mode for better concurrency and performance.
@@ -27,7 +31,7 @@ export async function createSQLiteHandler(): Promise<SQLiteHandler> {
 
   // Create the log table if it doesn't exist
   const createTableStatement = `
-      CREATE TABLE IF NOT EXISTS llm_logs(
+      CREATE TABLE IF NOT EXISTS ${tableName}(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           timestamp TEXT NOT NULL,
           provider TEXT NOT NULL,
@@ -57,7 +61,7 @@ export async function createSQLiteHandler(): Promise<SQLiteHandler> {
         };
         // Insert the log record into the database
         const insertStatement = db.prepare(`
-        INSERT INTO llm_logs (timestamp, provider, model, input_tokens, output_tokens, cost, latency_ms, status, error_message, metadata) 
+        INSERT INTO ${tableName} (timestamp, provider, model, input_tokens, output_tokens, cost, latency_ms, status, error_message, metadata) 
         VALUES (@timestamp, @provider, @model, @input_tokens, @output_tokens, @cost, @latency_ms, @status, @error_message, @metadata)
         `);
         insertStatement.run(logToInsert);

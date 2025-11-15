@@ -27,9 +27,7 @@ function validateFirebaseConfig(config: any): void {
   if (!config.projectId) {
     throw new Error("Firebase projectId is required");
   }
-  if (!config.collection) {
-    throw new Error("Firebase collection name is required");
-  }
+  // collection is optional, defaults to "llm_logs"
 }
 
 function validateMongoDBConfig(config: any): void {
@@ -42,9 +40,7 @@ function validateMongoDBConfig(config: any): void {
   if (!config.database) {
     throw new Error("MongoDB database name is required");
   }
-  if (!config.collection) {
-    throw new Error("MongoDB collection name is required");
-  }
+  // collection is optional, defaults to "llm_logs"
 }
 
 export const monitor = async (openai: OpenAI, monitorOptions?: MonitorOptions): Promise<OpenAI> => {
@@ -74,7 +70,7 @@ export const monitor = async (openai: OpenAI, monitorOptions?: MonitorOptions): 
     }
   } else if (databaseType === "sqlite") {
     if (!sqliteHandler) {
-      sqliteHandler = await createSQLiteHandler();
+      sqliteHandler = await createSQLiteHandler(monitorOptions?.database?.sqlite);
     }
   } else {
     throw new Error(`Unsupported database type: ${databaseType}. Supported types are: sqlite, firebase, mongodb`);

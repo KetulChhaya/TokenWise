@@ -5,7 +5,8 @@ export interface MongoDBHandler {
 }
 
 export function createMongoDBHandler(config: MongoDBConfig): MongoDBHandler {
-  console.log(`MongoDB database initialized for database: ${config.database}, collection: ${config.collection}`);
+  const collectionName = config.collection || "llm_logs"; // Default collection name
+  console.log(`MongoDB database initialized for database: ${config.database}, collection: ${collectionName}`);
   
   // Initialize MongoDB client
   let MongoClient: any = null;
@@ -33,7 +34,7 @@ export function createMongoDBHandler(config: MongoDBConfig): MongoDBHandler {
         // Connect to MongoDB
         await client.connect();
         db = client.db(config.database);
-        collection = db.collection(config.collection);
+        collection = db.collection(collectionName);
         
         console.log("MongoDB client initialized successfully");
       }
@@ -50,7 +51,7 @@ export function createMongoDBHandler(config: MongoDBConfig): MongoDBHandler {
           console.log("   1. Install MongoDB: npm install mongodb");
           console.log("   2. Provide a valid MongoDB connection URL");
           console.log("   3. Ensure your MongoDB Atlas cluster is accessible");
-          console.log(`Current log (would be stored in ${config.database} collection: ${config.collection}):`);
+          console.log(`Current log (would be stored in ${config.database} collection: ${collectionName}):`);
           console.log(JSON.stringify(log, null, 2));
           return;
         }
@@ -89,7 +90,7 @@ export function createMongoDBHandler(config: MongoDBConfig): MongoDBHandler {
     // Fallback to console logging
     return {
       insertLog(log: LogRecord) {
-        console.log(`MongoDB log (fallback): ${JSON.stringify(log)} to database: ${config.database}, collection: ${config.collection}`);
+        console.log(`MongoDB log (fallback): ${JSON.stringify(log)} to database: ${config.database}, collection: ${collectionName}`);
       }
     };
   }

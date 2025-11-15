@@ -15,7 +15,7 @@ export type DatabaseType = "sqlite" | "firebase" | "mongodb";
 
 export interface FirebaseConfig {
   projectId: string;
-  collection: string;
+  collection?: string; // Optional, defaults to "llm_logs"
   // Firebase Admin SDK configuration options
   serviceAccountKey?: string; // Path to service account key file
   serviceAccount?: {
@@ -38,7 +38,7 @@ export interface FirebaseConfig {
 export interface MongoDBConfig {
   connectionUrl: string;
   database: string;
-  collection: string;
+  collection?: string; // Optional, defaults to "llm_logs"
   // Optional MongoDB connection options
   options?: {
     maxPoolSize?: number;
@@ -50,13 +50,24 @@ export interface MongoDBConfig {
   };
 }
 
+export interface SQLiteConfig {
+  filename?: string; // Optional, defaults to "llm-logs.db"
+  tableName?: string; // Optional, defaults to "llm_logs"
+}
+
 export interface DatabaseConfig {
   type: DatabaseType;
   firebase?: FirebaseConfig;
   mongodb?: MongoDBConfig;
+  sqlite?: SQLiteConfig;
 }
 
 export interface MonitorOptions {
   database?: DatabaseConfig;
   metadata?: Record<string, any>;
+}
+
+// LangChain-specific types
+export interface LangChainMonitorOptions extends MonitorOptions {
+  // Additional LangChain-specific options can be added here in the future
 }
