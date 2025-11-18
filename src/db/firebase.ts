@@ -6,11 +6,12 @@ export interface FirebaseHandler {
 
 export function createFirebaseHandler(config: FirebaseConfig): FirebaseHandler {
   const collectionName = config.collection || "llm_logs"; // Default collection name
-  console.log(`Firebase database initialized for project: ${config.projectId}, collection: ${collectionName}`);
+  console.log(`Firebase database configured for project: ${config.projectId}, collection: ${collectionName}`);
   
   // Initialize Firebase Admin SDK
   let admin: any = null;
   let db: any = null;
+  let app: any = null;
   
   try {
     // Dynamic import to avoid issues when Firebase is not installed
@@ -26,38 +27,57 @@ export function createFirebaseHandler(config: FirebaseConfig): FirebaseHandler {
         }
         admin = firebaseAdmin.default;
         
-        // Initialize Firebase Admin SDK with different credential options
-        if (config.clientEmail && config.privateKey) {
-          // Environment variables approach (recommended)
-          admin.initializeApp({
-            credential: admin.credential.cert({
+        // Check if Firebase app is already initialized (plug-and-play approach)
+        const useExistingApp = config.useExistingApp !== false; // Default to true
+        const appName = config.appName; // Optional named app
+        
+        if (useExistingApp) {
+          try {
+            // Try to get existing app (default or named)
+            app = appName ? admin.app(appName) : admin.app();
+            console.log(`✅ Using existing Firebase app${appName ? ` "${appName}"` : ''} (plug-and-play mode)`);
+            
+            // Verify the app has the correct project ID if specified
+            if (config.projectId && app.options.projectId !== config.projectId) {
+              console.warn(`⚠️  Warning: Existing Firebase app project ID (${app.options.projectId}) differs from config (${config.projectId}). Using existing app's project ID.`);
+            }
+          } catch (error) {
+            // No existing app found, create a new one
+            app = null;
+          }
+        }
+        
+        // Create new app if no existing app found or useExistingApp is false
+        if (!app) {
+          console.log(`📦 ${useExistingApp ? 'No existing Firebase app found, initializing new one' : 'Creating new Firebase app'}...`);
+          
+          const appConfig: any = {
+            projectId: config.projectId,
+          };
+          
+          if (config.clientEmail && config.privateKey) {
+            // Environment variables approach (recommended)
+            appConfig.credential = admin.credential.cert({
               projectId: config.projectId,
               clientEmail: config.clientEmail,
               privateKey: config.privateKey.replace(/\\n/g, '\n'),
-            }),
-            projectId: config.projectId,
-          });
-        } else if (config.serviceAccount) {
-          // Service account object
-          admin.initializeApp({
-            credential: admin.credential.cert(config.serviceAccount),
-            projectId: config.projectId,
-          });
-        } else if (config.serviceAccountKey) {
-          // Service account key file path
-          admin.initializeApp({
-            credential: admin.credential.cert(config.serviceAccountKey),
-            projectId: config.projectId,
-          });
-        } else {
-          // Use default credentials (GOOGLE_APPLICATION_CREDENTIALS environment variable)
-          admin.initializeApp({
-            projectId: config.projectId,
-          });
+            });
+          } else if (config.serviceAccount) {
+            // Service account object
+            appConfig.credential = admin.credential.cert(config.serviceAccount);
+          } else if (config.serviceAccountKey) {
+            // Service account key file path
+            appConfig.credential = admin.credential.cert(config.serviceAccountKey);
+          }
+          // If no credentials provided, use default (GOOGLE_APPLICATION_CREDENTIALS)
+          
+          app = admin.initializeApp(appConfig, appName);
+          console.log(`✅ New Firebase app${appName ? ` "${appName}"` : ''} initialized successfully`);
         }
         
-        db = admin.firestore();
-        console.log("Firebase Admin SDK initialized successfully");
+        // Get Firestore instance from the app (existing or newly created)
+        db = app.firestore();
+        console.log(`🔥 Firestore connected - will only operate on collection: "${collectionName}"`);
       }
     };
     
@@ -96,15 +116,16 @@ export function createFirebaseHandler(config: FirebaseConfig): FirebaseHandler {
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
           };
 
-          // Insert log into Firestore
+          // SAFETY: Only insert into the specified collection - never touch other collections
+          // This ensures the package is completely isolated and doesn't interfere with existing data
           db.collection(collectionName).add(cleanLog).then(() => {
             // Silent success - no need to log every successful insert
           }).catch((error: any) => {
-            console.error("Failed to insert log to Firebase:", error.message || error);
+            console.error(`Failed to insert log to Firebase collection "${collectionName}":`, error.message || error);
             // Don't throw here to avoid breaking the main application flow
           });
         } catch (error) {
-          console.error("Error inserting log to Firebase:", error);
+          console.error(`Error inserting log to Firebase collection "${collectionName}":`, error);
         }
       }
     };

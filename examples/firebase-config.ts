@@ -1,11 +1,8 @@
 import OpenAI from "openai";
 import { monitor } from "../src/index.js";
-import dotenv from "dotenv";
 
 (async () => {
   try {
-    dotenv.config();
-
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
@@ -13,9 +10,23 @@ import dotenv from "dotenv";
     console.log("🔧 Firebase Configuration Examples");
     console.log("=" .repeat(50));
 
-    // Example 1: Using environment variables (Recommended)
-    console.log("📝 Example 1: Environment Variables");
+    // Example 1: Plug-and-Play (Recommended - uses existing Firebase app)
+    console.log("📝 Example 1: Plug-and-Play (Uses Existing Firebase App)");
     const monitoredOpenAI1 = await monitor(openai, {
+      database: {
+        type: "firebase",
+        firebase: {
+          projectId: process.env.FIREBASE_PROJECT_ID || "your-project-id",
+          collection: "openai_logs",
+          // No credentials needed if Firebase already initialized!
+          useExistingApp: true, // Default behavior
+        }
+      }
+    });
+
+    // Example 1b: Using environment variables (when creating new app)
+    console.log("📝 Example 1b: Environment Variables (New App)");
+    const monitoredOpenAI1b = await monitor(openai, {
       database: {
         type: "firebase",
         firebase: {
@@ -23,6 +34,7 @@ import dotenv from "dotenv";
           collection: "openai_logs",
           clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
           privateKey: process.env.FIREBASE_PRIVATE_KEY,
+          useExistingApp: false, // Force new app creation
         }
       }
     });
@@ -78,9 +90,10 @@ import dotenv from "dotenv";
     });
 
     console.log("✅ All Firebase configuration examples loaded successfully!");
-    console.log("💡 Choose the configuration method that works best for your setup");
+    console.log("💡 Recommended approach: Use plug-and-play mode (Example 1) for seamless integration");
+    console.log("🛡️  All configurations only operate on specified collections - zero interference!");
 
-    // Test with the first configuration
+    // Test with the plug-and-play configuration
     const response = await (monitoredOpenAI1 as any).chat.completions.create(
       {
         model: "gpt-3.5-turbo",

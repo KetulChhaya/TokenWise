@@ -16,6 +16,8 @@ export type DatabaseType = "sqlite" | "firebase" | "mongodb";
 export interface FirebaseConfig {
   projectId: string;
   collection?: string; // Optional, defaults to "llm_logs"
+  appName?: string; // Optional, for named Firebase apps (advanced usage)
+  useExistingApp?: boolean; // Optional, defaults to true - use existing app if available
   // Firebase Admin SDK configuration options
   serviceAccountKey?: string; // Path to service account key file
   serviceAccount?: {
