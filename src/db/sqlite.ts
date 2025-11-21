@@ -42,7 +42,8 @@ export async function createSQLiteHandler(config?: SQLiteConfig): Promise<SQLite
           latency_ms INTEGER NOT NULL,
           status TEXT NOT NULL CHECK(status IN ('SUCCESS', 'ERROR')),
           error_message TEXT,
-          metadata TEXT
+          metadata TEXT,
+          createdAt TEXT NOT NULL
       )
   `;
   db.exec(createTableStatement);
@@ -58,11 +59,12 @@ export async function createSQLiteHandler(config?: SQLiteConfig): Promise<SQLite
           cost: log.cost ?? null,
           error_message: log.error_message ?? null,
           metadata: log.metadata ? JSON.stringify(log.metadata) : null,
+          createdAt: log.timestamp, // Store ISO format timestamp as createdAt
         };
         // Insert the log record into the database
         const insertStatement = db.prepare(`
-        INSERT INTO ${tableName} (timestamp, provider, model, input_tokens, output_tokens, cost, latency_ms, status, error_message, metadata) 
-        VALUES (@timestamp, @provider, @model, @input_tokens, @output_tokens, @cost, @latency_ms, @status, @error_message, @metadata)
+        INSERT INTO ${tableName} (timestamp, provider, model, input_tokens, output_tokens, cost, latency_ms, status, error_message, metadata, createdAt) 
+        VALUES (@timestamp, @provider, @model, @input_tokens, @output_tokens, @cost, @latency_ms, @status, @error_message, @metadata, @createdAt)
         `);
         insertStatement.run(logToInsert);
       } catch (error) {

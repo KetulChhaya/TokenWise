@@ -69,7 +69,7 @@ export function createMongoDBHandler(config: MongoDBConfig): MongoDBHandler {
             status: log.status,
             ...(log.error_message && { error_message: log.error_message }),
             metadata: log.metadata ?? null,
-            createdAt: new Date(), // MongoDB native Date object
+            createdAt: log.timestamp, // Store ISO format timestamp as createdAt
           };
 
           // Insert log into MongoDB collection

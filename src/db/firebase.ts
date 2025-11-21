@@ -113,7 +113,7 @@ export function createFirebaseHandler(config: FirebaseConfig): FirebaseHandler {
             status: log.status,
             ...(log.error_message && { error_message: log.error_message }),
             metadata: log.metadata ? JSON.stringify(log.metadata) : null,
-            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            createdAt: log.timestamp, // Store ISO format timestamp as createdAt
           };
 
           // SAFETY: Only insert into the specified collection - never touch other collections
